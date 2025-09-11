@@ -10,33 +10,25 @@ st.set_page_config(
 )
 
 
-df_edu = pd.read_csv( "microdados_ed_basica_2024.csv",
-    encoding="latin1",  
-    sep=";",             
+df_edu = pd.read_csv( "amostra.csv",
+    encoding="utf-8",  
+    sep=",",             
     low_memory=False )
 
-colum = df_edu.columns
+df_edu = df_edu.drop(df_edu.columns[0], axis=1)
 
-comp_cols = [col for col in df_edu.columns if col.startswith("QT_COMP")]
-
-description = ['Sigla', 'Município', 'Quantidade Notebook', 'Número de Matrículas do Ensino Fundamental']
-
-df_filtered = df_edu[['SG_UF', 'NO_MUNICIPIO', 'QT_COMP_PORTATIL_ALUNO', 'QT_MAT_FUND']]
-
-df_filtered = df_filtered.dropna()
+st.write(df_edu)
 
 amostra = 51
 
 df_sample = (
-    df_filtered.groupby("SG_UF", group_keys=False)
-    .apply(lambda x: x.sample(max(1, int(amostra * len(x) / len(df_filtered))), random_state=42))
+    df_edu.groupby(df_edu.index, group_keys=False)
+    .apply(lambda x: x.sample(max(1, int(amostra * len(x) / len(df_edu))), random_state=42))
 )
 
-
-df_sample.columns = description
 df_compare = df_sample.groupby("Sigla").sum()
 
-st.write(df_sample)
+
 
 fig = go.Figure(data=[go.Bar(
     x=df_compare.index,
@@ -55,6 +47,7 @@ fig.update_layout(
 )
 
 st.plotly_chart(fig, use_container_width=True)
+
 
 """"
 Primeira coisa que precisamos fazer é selecionar os dados de forma randômica do dataframe apresentado.
