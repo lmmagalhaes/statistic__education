@@ -5,3 +5,5 @@ Site de Ações - https://playinvest.com.br/
 Schrödinger’s Garbage Bin - https://medium.com/design-bootcamp/schr%C3%B6dingers-garbage-bin-d82895cc095e
 
 Dados CIA Aberta CVM = https://dados.cvm.gov.br/dataset/cia_aberta-cad/resource/2391143f-1423-48a5-9f6a-423245aca362
+
+O poder do infinito = https://cdn.bookey.app/files/pdf/book/pt/o-poder-do-infinito.pdf
