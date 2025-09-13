@@ -7,3 +7,5 @@ Schrödinger’s Garbage Bin - https://medium.com/design-bootcamp/schr%C3%B6ding
 Dados CIA Aberta CVM = https://dados.cvm.gov.br/dataset/cia_aberta-cad/resource/2391143f-1423-48a5-9f6a-423245aca362
 
 O poder do infinito = https://cdn.bookey.app/files/pdf/book/pt/o-poder-do-infinito.pdf
+
+Storytelling com dados = https://www.kufunda.net/publicdocs/Storytelling%20com%20Dados%20(Cole%20Nussbaumer%20Knaflic%20[Knaflic%20etc.).pdf
