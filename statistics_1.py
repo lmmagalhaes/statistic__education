@@ -1,6 +1,9 @@
 import pandas as pd
 import streamlit as st
+import yfinance as yf
 import plotly.graph_objects as go
+import requests
+
 
 
 st.set_page_config(
@@ -9,37 +12,38 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
+bbas3 = yf.download("BBAS3.SA", start="2000-01-01", end="2025-01-01")
+ibov = yf.download("^BVSP", start="2000-01-01", end="2025-01-01")
 
-df_edu = pd.read_csv( "amostra.csv",
-    encoding="utf-8",  
-    sep=",",             
-    low_memory=False )
 
-df_edu = df_edu.drop(df_edu.columns[0], axis=1)
 
-st.write(df_edu)
+precos_fechamento = bbas3['Close'].resample('Y').last()
+precos_fechamentoIbov = ibov['Close'].resample('Y').last()
 
-amostra = 51
+df_cotacoes = pd.DataFrame(precos_fechamento)
+df_cotacoes_ibov = pd.DataFrame(precos_fechamentoIbov)
+df_cotacoes.index = df_cotacoes.index.year
+df_cotacoes_ibov.index = df_cotacoes_ibov.index.year
+df_cotacoes.rename(columns={'Close': 'Fechamento'}, inplace=True)
+df_cotacoes["BBAS3.SA"] = round(df_cotacoes["BBAS3.SA"], 2)
+df_cotacoes["IBOVESPA"] = df_cotacoes_ibov['^BVSP']
 
-df_sample = (
-    df_edu.groupby(df_edu.index, group_keys=False)
-    .apply(lambda x: x.sample(max(1, int(amostra * len(x) / len(df_edu))), random_state=42))
-)
 
-df_compare = df_sample.groupby("Sigla").sum()
+st.write(df_cotacoes)
+
 
 
 
 fig = go.Figure(data=[go.Bar(
-    x=df_compare.index,
-    y=df_compare['Quantidade Notebook'],
+    x=df_cotacoes.index,
+    y=round(df_cotacoes['BBAS3.SA'],2),
 
 )])
 
 fig.update_layout(
-    title="Quantidade de computadores portáteis por UF",
-    xaxis_title="UF",
-    yaxis_title="Quantidade de computadores",
+    title="Comparação",
+    xaxis_title="Ano",
+    yaxis_title="Preço da Ação",
     xaxis=dict(tickangle=-45),
     template="plotly_white",
     height=600,
@@ -50,7 +54,13 @@ st.plotly_chart(fig, use_container_width=True)
 
 
 """"
-Primeira coisa que precisamos fazer é selecionar os dados de forma randômica do dataframe apresentado.
-Essa amostra deve homogênea com relação as UFs
+Primeiro vou buscar as cotações de BBAS3 ao longo dos anos
+
+Depois vou pegar o lucro da empresa ao longo dos anos
+Vou ter o ano e a ação
+
+Vou pegar o indice bovespa ao longo dos anos
+
+
 
 """
