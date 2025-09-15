@@ -7,7 +7,7 @@ import requests
 
 
 st.set_page_config(
-    page_title="Análise da Renda de Cada Estado x Número de Matrículas no Ensino Fundamental ",
+    page_title="Análise Estatística - BBAS3",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
