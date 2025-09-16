@@ -7,7 +7,7 @@ import requests
 
 
 st.set_page_config(
-    page_title="Análise Estatística - BBAS3",
+    page_title="Análise Estatística - BBAS3 e ITUB4",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
@@ -21,10 +21,13 @@ def classificar_governo(ano):
         return "Governo Temer"
     elif 2019 <= ano <= 2022:
         return "Governo Bolsonaro"
+    elif 2023 <= ano <= 2025:
+        return "Governo Lula"
     else:
         return "Outro"
 
 bbas3 = yf.download("BBAS3.SA", start="2000-01-01", end="2025-01-01")
+itub4 = yf.download("ITUB4.SA", start="2000-01-01", end="2025-01-01")
 ibov = yf.download("^BVSP", start="2000-01-01", end="2025-01-01")
 lucro_liquido_bbas3 = {
     '31/12/2024': '26.36B',
@@ -114,10 +117,14 @@ lucro_liquido_bbas3 = {
 
 
 precos_fechamento = bbas3['Close'].resample('YE').last()
+precos_fechamento_itub4 = itub4['Close'].resample('YE').last()
 precos_fechamentoIbov = ibov['Close'].resample('YE').last()
 
 df_cotacoes = pd.DataFrame(precos_fechamento)
+df_cotacoes_itub = pd.DataFrame(precos_fechamento_itub4)
 df_cotacoes = df_cotacoes.iloc[4:]
+df_cotacoes_itub = df_cotacoes_itub.iloc[4:]
+df_cotacoes_itub.index = df_cotacoes_itub.index.year
 
 
 df_cotacoes_ibov = pd.DataFrame(precos_fechamentoIbov)
@@ -141,16 +148,26 @@ df_cotacoes['Período_Governo'] = df_cotacoes.index.map(classificar_governo)
 lucro_anual = df_lucro_bbas3.groupby('ano')['valor_numerico'].sum()
 df_cotacoes['Lucro_Liquido BBAS3'] = lucro_anual
 df_cotacoes["IBOVESPA"] = df_cotacoes_ibov['^BVSP']
+df_cotacoes["ITUB4"] = round(df_cotacoes_itub['ITUB4.SA'], 2)
 
 df_cotacoes.insert(0, 'Período_Governo', df_cotacoes.pop('Período_Governo'))
+df_cotacoes.insert(1, 'ITUB4.SA', df_cotacoes.pop('ITUB4'))
 
+df_long = pd.DataFrame({
+    'Ano': df_cotacoes.index.tolist() * 2,
+    'Ativo': ['BBAS3.SA'] * len(df_cotacoes) + ['ITUB4.SA'] * len(df_cotacoes),
+    'Preço': df_cotacoes['BBAS3.SA'].tolist() + df_cotacoes['ITUB4.SA'].tolist(),
+    'Lucro': df_cotacoes['Lucro_Liquido BBAS3'].tolist() + [None] * len(df_cotacoes),  # ITUB4 não tem lucro aqui
+    'IBOVESPA': df_cotacoes['IBOVESPA'].tolist() * 2,
+    'Período_Governo': df_cotacoes['Período_Governo'].tolist() * 2
+})
 
 
 
 
 # df_cotacoes["LUCRO_LIQUIDO"] = lucro_liquido_bbas3.values()
  
-st.write(df_cotacoes)
+st.write(df_long)
 
 
 

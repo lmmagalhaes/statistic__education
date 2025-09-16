@@ -11,3 +11,5 @@ Dados demonstrações financeiras CVM = https://dados.cvm.gov.br/dataset/cia_abe
 O poder do infinito = https://cdn.bookey.app/files/pdf/book/pt/o-poder-do-infinito.pdf
 
 Storytelling com dados = https://www.kufunda.net/publicdocs/Storytelling%20com%20Dados%20(Cole%20Nussbaumer%20Knaflic%20[Knaflic%20etc.).pdf
+
+site onde busquei os lucros dos anos da empresa = https://www.investsite.com.br/principais_indicadores.php?cod_negociacao=bbas3
