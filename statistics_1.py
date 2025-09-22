@@ -12,19 +12,19 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-def classificar_governo(ano):
-    if 2003 <= ano <= 2010:
-        return "Governo Lula"
-    elif 2011 <= ano <= 2016:
-        return "Governo Dilma"
-    elif 2017 <= ano <= 2018:
-        return "Governo Temer"
-    elif 2019 <= ano <= 2022:
-        return "Governo Bolsonaro"
-    elif 2023 <= ano <= 2025:
-        return "Governo Lula"
-    else:
-        return "Outro"
+# def classificar_governo(ano):
+#     if 2003 <= ano <= 2010:
+#         return "Governo Lula"
+#     elif 2011 <= ano <= 2016:
+#         return "Governo Dilma"
+#     elif 2017 <= ano <= 2018:
+#         return "Governo Temer"
+#     elif 2019 <= ano <= 2022:
+#         return "Governo Bolsonaro"
+#     elif 2023 <= ano <= 2025:
+#         return "Governo Lula"
+#     else:
+#         return "Outro"
 
 bbas3 = yf.download("BBAS3.SA", start="2000-01-01", end="2025-01-01")
 itub4 = yf.download("ITUB4.SA", start="2000-01-01", end="2025-01-01")
@@ -101,6 +101,7 @@ lucro_liquido_bbas3 = {
     '31/12/2007': '1.22B',
     '30/09/2007': '1.36B',
     '30/06/2007': '2.48B',
+    '31/03/2007': '0.00B',
     '31/12/2006': '1.25B',
     '30/09/2006': '0.90B',
     '30/06/2006': '1.55B',
@@ -187,6 +188,7 @@ lucro_liquido_itub4 = {
     '31/12/2007': '2.03B',
     '30/09/2007': '2.43B',
     '30/06/2007': '2.11B',
+    '31/03/2007': '0.00B',
     '31/12/2006': '1.90B',
     '30/09/2006': '0.07B',
     '30/06/2006': '1.50B',
@@ -202,22 +204,26 @@ lucro_liquido_itub4 = {
 }
 
 
-precos_fechamento = bbas3['Close'].resample('YE').last()
-precos_fechamento_itub4 = itub4['Close'].resample('YE').last()
-precos_fechamentoIbov = ibov['Close'].resample('YE').last()
+precos_fechamento = bbas3['Close'].resample('QE').last()
+precos_fechamento_itub4 = itub4['Close'].resample('QE').last()
+precos_fechamentoIbov = ibov['Close'].resample('QE').last()
 
 df_cotacoes = pd.DataFrame(precos_fechamento)
 df_cotacoes_itub = pd.DataFrame(precos_fechamento_itub4)
-df_cotacoes = df_cotacoes.iloc[4:]
+df_cotacoes.index = df_cotacoes.index.astype(str)
+
+df_cotacoes = df_cotacoes.iloc[16:]
 df_cotacoes_itub = df_cotacoes_itub.iloc[4:]
-df_cotacoes_itub.index = df_cotacoes_itub.index.year
+df_cotacoes_itub.index = df_cotacoes_itub.index.to_period('Q')
 
 
 df_cotacoes_ibov = pd.DataFrame(precos_fechamentoIbov)
-df_cotacoes_ibov = df_cotacoes_ibov.iloc[4:]
-df_cotacoes.index = df_cotacoes.index.year
-df_cotacoes_ibov.index = df_cotacoes_ibov.index.year
+df_cotacoes_ibov = df_cotacoes_ibov.iloc[16:]
+df_cotacoes.index = df_cotacoes.index.to_period('Q')
+df_cotacoes_ibov.index = df_cotacoes_ibov.index.to_period('Q')
 df_cotacoes["BBAS3.SA"] = round(df_cotacoes["BBAS3.SA"], 2)
+st.write(len(df_cotacoes['BBAS3.SA']))
+
 
 # CORREÇÃO: Processamento do lucro
 df_lucro_bbas3 = pd.DataFrame.from_dict(lucro_liquido_bbas3, orient='index', columns=['valor'])
@@ -226,50 +232,52 @@ df_lucro_itub4 = pd.DataFrame.from_dict(lucro_liquido_itub4, orient='index', col
 df_lucro_itub4.index = pd.to_datetime(df_lucro_itub4.index, format='%d/%m/%Y')
 
 # Extrair o ano para uma coluna temporária
-df_lucro_bbas3['ano'] = df_lucro_bbas3.index.year
-df_lucro_itub4['ano'] = df_lucro_itub4.index.year
+#df_lucro_bbas3['ano'] = df_lucro_bbas3.index.year
+#df_lucro_itub4['ano'] = df_lucro_itub4.index.year
 
 # Converter valores para numéricos
 df_lucro_bbas3['valor_numerico'] = df_lucro_bbas3["valor"].str.replace('B', '').astype(float)
+df_lucro_bbas3 = df_lucro_bbas3.iloc[::-1]
 df_lucro_itub4['valor_numerico'] = df_lucro_itub4["valor"].str.replace('B', '').astype(float)
 
-df_cotacoes['Período_Governo'] = df_cotacoes.index.map(classificar_governo)
+# df_cotacoes['Período_Governo'] = df_cotacoes.index.map(classificar_governo)
 
 # Agrupar por ano e somar
-lucro_anual_bbas3 = df_lucro_bbas3.groupby('ano')['valor_numerico'].sum()
-df_cotacoes['Lucro_Liquido BBAS3'] = lucro_anual_bbas3
-lucro_anual_itub4 = df_lucro_itub4.groupby('ano')['valor_numerico'].sum()
-df_cotacoes['Lucro_Liquido ITUB4'] = lucro_anual_itub4
+lucro_anual_bbas3 = df_lucro_bbas3['valor_numerico'].sum()
+df_cotacoes['Lucro_Liquido BBAS3'] =  df_lucro_bbas3['valor_numerico'].values
+lucro_anual_itub4 = df_lucro_itub4['valor_numerico'].sum()
+df_cotacoes['Lucro_Liquido ITUB4'] = df_lucro_itub4['valor_numerico'].values
 df_cotacoes["IBOVESPA"] = df_cotacoes_ibov['^BVSP']
 df_cotacoes["ITUB4"] = round(df_cotacoes_itub['ITUB4.SA'], 2)
 
-df_cotacoes.insert(0, 'Período_Governo', df_cotacoes.pop('Período_Governo'))
+# df_cotacoes.insert(0, 'Período_Governo', df_cotacoes.pop('Período_Governo'))
 df_cotacoes.insert(1, 'ITUB4.SA', df_cotacoes.pop('ITUB4'))
+st.write(len(df_lucro_bbas3['valor_numerico'].values))
 
 # DataFrame para BBAS3
 df_bbas3 = pd.DataFrame({
-    'Ano': df_cotacoes.index,
+    'Trimestre': df_cotacoes.index,
     'Ativo': 'BBAS3.SA',
     'Preço': df_cotacoes['BBAS3.SA'],
     'Lucro': df_cotacoes['Lucro_Liquido BBAS3'],
     'IBOVESPA': df_cotacoes['IBOVESPA'],
-    'Período_Governo': df_cotacoes['Período_Governo']
+    # 'Período_Governo': df_cotacoes['Período_Governo']
 })
 
 # DataFrame para ITUB4
 df_itub4 = pd.DataFrame({
-    'Ano': df_cotacoes.index,
+    'Trimestre': df_cotacoes.index,
     'Ativo': 'ITUB4.SA',
     'Preço': df_cotacoes['ITUB4.SA'],
     'Lucro': df_cotacoes['Lucro_Liquido ITUB4'],
     'IBOVESPA': df_cotacoes['IBOVESPA'],
-    'Período_Governo': df_cotacoes['Período_Governo']
+    # 'Período_Governo': df_cotacoes['Período_Governo']
 })
 
 # Junta os dois
-df_long = pd.concat([df_bbas3, df_itub4], ignore_index=True)
+#df_long = pd.concat([df_bbas3, df_itub4], ignore_index=True)
 
-st.write(df_long)
+st.write(df_bbas3)
 
 # df_cotacoes["LUCRO_LIQUIDO"] = lucro_liquido_bbas3.values()
  
