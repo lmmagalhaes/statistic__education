@@ -13,3 +13,18 @@ O poder do infinito = https://cdn.bookey.app/files/pdf/book/pt/o-poder-do-infini
 Storytelling com dados = https://www.kufunda.net/publicdocs/Storytelling%20com%20Dados%20(Cole%20Nussbaumer%20Knaflic%20[Knaflic%20etc.).pdf
 
 site onde busquei os lucros dos anos da empresa = https://www.investsite.com.br/principais_indicadores.php?cod_negociacao=bbas3
+
+Livro sobre perfomance = file:///Users/leonardomonteiromagalhaes/Downloads/Systems.Performance.Enterprise.and.the.Cloud.2nd.Edition.2020.12.pdf
+
+Livro sobre romance com TI = https://cdn.bookey.app/files/pdf/book/pt/the-phoenix-project.pdf
+
+
+Livro como avaliar ações = https://lp.suno.com.br/wp-content/uploads/2024/05/Suno_Research_Ebook_Como_analisar_uma_acao_2024.pdf
+
+
+Efeito Dunning Kruger = https://www.youtube.com/watch?v=0m6T2MjTjME
+
+Onde pesquisar dono de IPs = https://bgp.he.net/AS51167#_traceroute
+
+
+Vídeo pra melhorar o espiritual = https://www.youtube.com/watch?v=Z18V34jC8Ic

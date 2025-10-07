@@ -169,7 +169,37 @@ df_bbas3['Trimestre'] = pd.to_datetime(df_bbas3['Trimestre']).dt.to_period('Q')
 df_bbas3['Trimestre'] = df_bbas3['Trimestre'].apply(
     lambda p: f"Q{p.quarter} {p.start_time.strftime('%m-%Y')}"
 )
+
+st.write("### Análise Estatística - BBAS3")
 st.write(df_bbas3)
+
+media_preco = df_cotacoes['BBAS3.SA'].mean()
+mediana_preco = df_cotacoes['BBAS3.SA'].median()
+moda_preco = df_cotacoes['BBAS3.SA'].mode()[0]
+std_preco = df_cotacoes['BBAS3.SA'].std()
+var_preco = df_cotacoes['BBAS3.SA'].var()   
+min_preco = df_cotacoes['BBAS3.SA'].min()
+max_preco = df_cotacoes['BBAS3.SA'].max()
+range_preco = max_preco - min_preco
+
+
+st.subheader("Estatísticas Descritivas do Preço da Ação BBAS3")
+col1, col2, col3 = st.columns(3)
+with col1:
+    st.metric(label="Média de Preço", value=f"Média: {media_preco:.2f}")
+with col2:  
+    st.metric(label="Mediana de Preço", value=f"Mediana: {mediana_preco:.2f}")
+with col3:
+    st.metric(label="Desvio Padrão do Preço", value=f"Desvio Padrão: {std_preco:.2f}")
+
+col4, col5, col6 = st.columns(3)
+with col4:
+    st.metric(label="Moda do Preço", value=f"Moda: {moda_preco:.2f}")
+with col5:
+    st.metric(label="Variância do Preço", value=f"Variância: {var_preco:.2f}")
+with col6:
+    st.metric(label="Amplitude do Preço", value=f"Amplitude: {range_preco:.2f}")
+
 
 fig = go.Figure(data=[go.Bar(
     x=df_cotacoes.index,
