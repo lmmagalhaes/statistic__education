@@ -11,6 +11,25 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
+def card(title, value, background_color="#f0f2f6"):
+    st.markdown(
+        f"""
+        <div style="
+            background-color: {background_color};
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 10px;
+        ">
+            <h4 style="color: #333;">{title}</h4>
+            <h2 style="color: #007bff;">{value}</h2>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
 bbas3 = yf.download("BBAS3.SA", start="2000-01-01", end="2025-01-01")
 ibov = yf.download("^BVSP", start="2000-01-01", end="2025-01-01")
 
@@ -186,19 +205,75 @@ range_preco = max_preco - min_preco
 st.subheader("Estatísticas Descritivas do Preço da Ação BBAS3")
 col1, col2, col3 = st.columns(3)
 with col1:
-    st.metric(label="Média de Preço", value=f"Média: {media_preco:.2f}")
+    card("Média de Preço", value=f"Média: {media_preco:.2f}")
 with col2:  
-    st.metric(label="Mediana de Preço", value=f"Mediana: {mediana_preco:.2f}")
+    card("Mediana de Preço", value=f"Mediana: {mediana_preco:.2f}")
 with col3:
-    st.metric(label="Desvio Padrão do Preço", value=f"Desvio Padrão: {std_preco:.2f}")
+    card("Desvio Padrão do Preço", value=f"Desvio Padrão: {std_preco:.2f}")
 
 col4, col5, col6 = st.columns(3)
 with col4:
-    st.metric(label="Moda do Preço", value=f"Moda: {moda_preco:.2f}")
+    card("Moda do Preço", value=f"Moda: {moda_preco:.2f}")
 with col5:
-    st.metric(label="Variância do Preço", value=f"Variância: {var_preco:.2f}")
+    card("Variância do Preço", value=f"Variância: {var_preco:.2f}")
 with col6:
-    st.metric(label="Amplitude do Preço", value=f"Amplitude: {range_preco:.2f}")
+    card("Amplitude do Preço", value=f"Amplitude: {range_preco:.2f}")
+
+
+media_lucro = df_cotacoes['Lucro_Liquido BBAS3'].mean()
+mediana_lucro = df_cotacoes['Lucro_Liquido BBAS3'].median()
+moda_lucro = df_cotacoes['Lucro_Liquido BBAS3'].mode()[0]
+std_lucro = df_cotacoes['Lucro_Liquido BBAS3'].std()
+var_lucro = df_cotacoes['Lucro_Liquido BBAS3'].var()   
+min_lucro = df_cotacoes['Lucro_Liquido BBAS3'].min()
+max_lucro = df_cotacoes['Lucro_Liquido BBAS3'].max()
+range_lucro = max_lucro - min_lucro
+
+
+st.subheader("Estatísticas Descritivas do Lucro da Ação BBAS3")
+col1, col2, col3 = st.columns(3)
+with col1:
+    card("Média do Lucro", value=f"Média: {media_lucro:.2f}B")
+with col2:  
+    card("Mediana do Lucro", value=f"Mediana: {mediana_lucro:.2f}B")
+with col3:
+    card("Desvio Padrão do Lucro", value=f"Desvio Padrão: {std_lucro:.2f}B")    
+
+col4, col5, col6 = st.columns(3)
+with col4:
+    card("Moda do Lucro", value=f"Moda: {moda_lucro:.2f}B")
+with col5:
+    card("Variância do Lucro", value=f"Variância: {var_lucro:.2f}B")
+with col6:
+    card("Amplitude do Lucro", value=f"Amplitude: {range_lucro:.2f}B")
+
+st.subheader("Estatísticas Descritivas do IBOVESPA")
+
+media_ibov = df_cotacoes['IBOVESPA'].mean()
+mediana_ibov = df_cotacoes['IBOVESPA'].median()
+moda_ibov = df_cotacoes['IBOVESPA'].mode()[0]
+std_ibov = df_cotacoes['IBOVESPA'].std()
+var_ibov = df_cotacoes['IBOVESPA'].var()   
+min_ibov = df_cotacoes['IBOVESPA'].min()
+max_ibov = df_cotacoes['IBOVESPA'].max()
+range_ibov = max_ibov - min_ibov
+
+col1, col2, col3 = st.columns(3)
+with col1:
+    card("Média do IBOVESPA", value=f"Média: {media_ibov:.2f}")
+with col2:  
+    card("Mediana do IBOVESPA", value=f"Mediana: {mediana_ibov:.2f}")
+with col3:
+    card("Desvio Padrão do IBOVESPA", value=f"Desvio Padrão: {std_ibov:.2f}")
+
+col4, col5, col6 = st.columns(3)
+with col4:
+    card("Moda do IBOVESPA", value=f"Moda: {moda_ibov:.2f}")
+with col5:
+    card("Variância do IBOVESPA", value=f"Variância: {var_ibov:.2f}")
+with col6:
+    card("Amplitude do IBOVESPA", value=f"Amplitude: {range_ibov:.2f}")
+
 
 
 fig = go.Figure(data=[go.Bar(
